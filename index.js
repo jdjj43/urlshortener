@@ -29,10 +29,13 @@ app.get('/', function (req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
+const urlRE = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+
 // Your first API endpoint
 app.post('/api/shorturl/', function (req, res) {
   //cheackear si existe en base de datos
   const execute = async() => {
+    if(!req.body.url.match(urlRE)) res.json({ error: 'invalid url' });
     try {
       const data = await UrlShort.findOne({ url: req.body.url });
       if(!data) {
